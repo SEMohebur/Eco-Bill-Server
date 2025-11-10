@@ -24,6 +24,7 @@ async function run() {
 
     const db = client.db("ecobills-db");
     const billsCollection = db.collection("bills");
+    const myPayBill = db.collection("payBills");
 
     //get all
     app.get("/bills", async (req, res) => {
@@ -56,6 +57,13 @@ async function run() {
       const result = await billsCollection
         .find({ category: category })
         .toArray();
+      res.send(result);
+    });
+
+    //myPayBill
+    app.post("/my-pay-bill", async (req, res) => {
+      const data = req.body;
+      const result = await myPayBill.insertOne(data);
       res.send(result);
     });
 
