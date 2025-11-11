@@ -74,6 +74,24 @@ async function run() {
       res.send(result);
     });
 
+    //update single mybill history
+    app.put("/my-paybill-history/:id", async (req, res) => {
+      const { id } = req.params;
+      const data = req.body;
+      const objectId = new ObjectId(id);
+      const filter = { _id: objectId };
+      const update = {
+        $set: data,
+      };
+      const result = await myPayBill.updateOne(filter, update);
+      console.log(result);
+
+      res.send({
+        success: true,
+        result,
+      });
+    });
+
     await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
