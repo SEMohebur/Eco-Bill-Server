@@ -92,6 +92,16 @@ async function run() {
       });
     });
 
+    //delete my pay bill
+    app.delete("/my-paybill-history/:id", async (req, res) => {
+      const { id } = req.params;
+      const result = await myPayBill.deleteOne({ _id: new ObjectId(id) });
+
+      res.send({
+        success: true,
+      });
+    });
+
     await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
