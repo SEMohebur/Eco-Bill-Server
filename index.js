@@ -60,10 +60,17 @@ async function run() {
       res.send(result);
     });
 
-    //myPayBill
+    //myPayBill post
     app.post("/my-pay-bill", async (req, res) => {
       const data = req.body;
       const result = await myPayBill.insertOne(data);
+      res.send(result);
+    });
+
+    // get my all payBill history
+    app.get("/my-paybill-history", async (req, res) => {
+      const email = req.query.email;
+      const result = await myPayBill.find({ email: email }).toArray();
       res.send(result);
     });
 
