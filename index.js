@@ -1,11 +1,17 @@
 const express = require("express");
 const cors = require("cors");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+const admin = require("firebase-admin");
+const serviceAccount = require("./servicekey.json");
 require("dotenv").config();
 const app = express();
 const port = 3000;
 app.use(cors());
 app.use(express.json());
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
 
 const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.mgt1ucj.mongodb.net/?appName=Cluster0`;
 
@@ -17,6 +23,22 @@ const client = new MongoClient(uri, {
     deprecationErrors: true,
   },
 });
+
+// jwt authentication test/midleware
+const verifyToken = async (req, res, next) => {
+  const authorization = req.headers.authorization;
+  if (!authorization) {
+    return res.status(401).send({ message: "unauthorized acces" });
+  }
+  const token = authorization.split(" ")[1];
+
+  try {
+    await admin.auth().verifyIdToken(token);
+    next();
+  } catch (error) {
+    res.status(401).send({ message: "unauthorized acces" });
+  }
+};
 
 async function run() {
   try {
@@ -33,7 +55,7 @@ async function run() {
     });
 
     // get single data
-    app.get("/bills/:id", async (req, res) => {
+    app.get("/bills/:id", verifyToken, async (req, res) => {
       const { id } = req.params;
       const result = await billsCollection.findOne({ _id: new ObjectId(id) });
 
