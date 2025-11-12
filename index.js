@@ -83,21 +83,21 @@ async function run() {
     });
 
     //myPayBill post
-    app.post("/my-pay-bill", async (req, res) => {
+    app.post("/my-pay-bill", verifyToken, async (req, res) => {
       const data = req.body;
       const result = await myPayBill.insertOne(data);
       res.send(result);
     });
 
     // get my all payBill history
-    app.get("/my-paybill-history", async (req, res) => {
+    app.get("/my-paybill-history", verifyToken, async (req, res) => {
       const email = req.query.email;
       const result = await myPayBill.find({ email: email }).toArray();
       res.send(result);
     });
 
     //update single mybill history
-    app.put("/my-paybill-history/:id", async (req, res) => {
+    app.put("/my-paybill-history/:id", verifyToken, async (req, res) => {
       const { id } = req.params;
       const data = req.body;
       const objectId = new ObjectId(id);
@@ -114,7 +114,7 @@ async function run() {
     });
 
     //delete my pay bill
-    app.delete("/my-paybill-history/:id", async (req, res) => {
+    app.delete("/my-paybill-history/:id", verifyToken, async (req, res) => {
       const { id } = req.params;
       const result = await myPayBill.deleteOne({ _id: new ObjectId(id) });
 
