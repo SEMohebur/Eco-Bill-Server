@@ -44,7 +44,7 @@ async function run() {
     app.get("/latest-bills", async (req, res) => {
       const result = await billsCollection
         .find()
-        .sort({ date: "asc" })
+        .sort({ date: -1 })
         .limit(6)
         .toArray();
 
@@ -84,7 +84,6 @@ async function run() {
         $set: data,
       };
       const result = await myPayBill.updateOne(filter, update);
-      console.log(result);
 
       res.send({
         success: true,
